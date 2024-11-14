@@ -43,10 +43,15 @@ Page(
                 hmUI.deleteWidget(this.state._taskListWidget)
             }
             taskListRaw.sort((a, b) => a.due - b.due)
-            const taskList = taskListRaw.map((val) => {
+            const now = Date.now()
+            let beforeNowIndex = 0
+            const taskList = taskListRaw.map((val, idx) => {
+                if (val.due < now) {
+                    beforeNowIndex = idx
+                }
                 return {
                     title: val.title,
-                    due: new Date(val.due).toString().split("GMT")[0]
+                    due: getDateString(val.due)
                 }
             })
 
@@ -80,8 +85,35 @@ Page(
                         text_view_count: 2,
                         item_height: px(75)
                     },
+                    {
+                        type_id: 2,
+                        text_view: [
+                            {
+                                x: px(15),
+                                y: px(0),
+                                w: px(360),
+                                h: px(45),
+                                key: 'title',
+                                color: 0xffaa00,
+                                text_size: px(36),
+                                align_h: hmUI.align.LEFT
+                            },
+                            {
+                                x: px(15),
+                                y: px(50),
+                                w: px(360),
+                                h: px(25),
+                                key: 'due',
+                                color: 0xa56e00,
+                                text_size: px(24),
+                                align_h: hmUI.align.LEFT
+                            }
+                        ],
+                        text_view_count: 2,
+                        item_height: px(75)
+                    }
                 ],
-                item_config_count: 1,
+                item_config_count: 2,
                 x: px(40),
                 y: px(65),
                 h: DEVICE_HEIGHT - px(115),
@@ -91,11 +123,16 @@ Page(
                 data_type_config: [
                     {
                         start: 0,
+                        end: beforeNowIndex,
+                        type_id: 2
+                    },
+                    {
+                        start: beforeNowIndex ? 0 : beforeNowIndex + 1,
                         end: taskList.length,
                         type_id: 1
                     }
                 ],
-                data_type_config_count: 1,
+                data_type_config_count: 2,
                 item_enable_horizontal_drag: false,
             })
         },
