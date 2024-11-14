@@ -44,7 +44,7 @@ Page(
             }
             taskListRaw.sort((a, b) => a.due - b.due)
             const now = Date.now()
-            let beforeNowIndex = 0
+            let beforeNowIndex = -1
             const taskList = taskListRaw.map((val, idx) => {
                 if (val.due < now) {
                     beforeNowIndex = idx
@@ -122,12 +122,12 @@ Page(
                 data_count: taskList.length,
                 data_type_config: [
                     {
-                        start: beforeNowIndex ? 0 : -1,
-                        end: beforeNowIndex ? -1 : beforeNowIndex,
+                        start: beforeNowIndex > -1 ? 0 : -1,
+                        end: beforeNowIndex > -1 ? beforeNowIndex : -1,
                         type_id: 2
                     },
                     {
-                        start: beforeNowIndex ? 0 : beforeNowIndex + 1,
+                        start: beforeNowIndex > -1 ? beforeNowIndex + 1 : 0,
                         end: taskList.length,
                         type_id: 1
                     }
@@ -172,7 +172,6 @@ Page(
                         const alarms = getAllAlarms()
                         alarms.forEach(alarm => {
                             cancel(alarm)
-                            console.log(" destroying ", alarm)
                         });
 
                         const tasks = data.body
@@ -193,11 +192,8 @@ Page(
                                         param: task.id,
                                         repeat_type: REPEAT_ONCE,
                                     })
-                                    if (id != 0) {
-                                        taskByTaskID[task.id] = { title: task.content, due: t }
-                                    }
-                                    console.log("setting ", id)
                                 }
+                                taskByTaskID[task.id] = { title: task.content, due: t }
                             }
                         })
 
