@@ -15,7 +15,7 @@ my phone.
 
 ## UI
 - The top section shows when tasks were last sync'd
-- The middle section shows the task list
+- The middle section shows the task list. Tasks before now are in orange.
 - At the bottom is the button to sync today's tasks
 
 ## Caveats
