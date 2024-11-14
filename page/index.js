@@ -122,8 +122,8 @@ Page(
                 data_count: taskList.length,
                 data_type_config: [
                     {
-                        start: 0,
-                        end: beforeNowIndex,
+                        start: beforeNowIndex ? 0 : -1,
+                        end: beforeNowIndex ? -1 : beforeNowIndex,
                         type_id: 2
                     },
                     {
