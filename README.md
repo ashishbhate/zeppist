@@ -13,14 +13,20 @@ my phone.
 2. Add your Todoist API key to the app.js file
 3. Run `zepp preview`
 
+## UI
+- The top section shows when tasks were last sync'd
+- The middle section shows the task list
+- At the bottom is the button to sync today's tasks
 
 ## Caveats
 1. The app isn't very polished, or user friendly. It's good enough for me.
-2. The app only shows notifications for tasks with due dates at the time the task
+2. The device needs to be connected to the phone to fetch tasks
+3. The app only shows notifications for tasks with due dates at the time the task
 is due
-3. You cannot mark the task as done, or update the task in anyway.
-4. The code is pretty simple, but a bit hackish to work around a few issues with
+4. You cannot mark the task as done, or update the task in anyway.
+5. The code is pretty simple, but a bit hackish to work around a few issues with
 the Zepp OS libraries
-5. I've tested to work on my Amazfit Active Edge, which is a round device. I have
-not tested this to work on any square device. Getting the simulator running properly
+6. I've tested to work on my Amazfit Active Edge, which is a round device. I have
+not tested this to work on any square device. Getting the simulator to run properly
 is a bit difficult.
+
