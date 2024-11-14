@@ -6,8 +6,7 @@ import { getSwiperIndex, SCROLL_MODE_SWIPER_HORIZONTAL, setScrollMode, swipeToIn
 import * as hmUI from "@zos/ui";
 import { log as Logger, px } from "@zos/utils";
 import {
-    FETCH_RESULT_STATUS,
-    FETCH_RESULT_TEXT,
+    TOP_TEXT,
     FETCH_TODAY_BUTTON,
 } from "zosLoader:./index.[pf].layout.js";
 import { DEVICE_HEIGHT, DEVICE_WIDTH } from "../utils/config/device";
@@ -83,9 +82,9 @@ Page(
                     },
                 ],
                 item_config_count: 1,
-                x: DEVICE_WIDTH + px(40),
-                y: px(50),
-                h: DEVICE_HEIGHT - px(100),
+                x: px(40),
+                y: px(65),
+                h: DEVICE_HEIGHT - px(115),
                 w: DEVICE_WIDTH - px(40),
                 data_array: taskList,
                 data_count: taskList.length,
@@ -97,63 +96,19 @@ Page(
                     }
                 ],
                 data_type_config_count: 1,
-                on_page: 1,
                 item_enable_horizontal_drag: false,
             })
         },
 
         build() {
-            setScrollMode({
-                mode: SCROLL_MODE_SWIPER_HORIZONTAL,
-                options: {
-                    width: DEVICE_WIDTH,
-                    count: 2,
-                },
-            })
             if (getApp().globalData.TASK_BY_TASK_ID) {
                 this.buildTaskList(Object.values(getApp().globalData.TASK_BY_TASK_ID))
             } else {
                 this.buildTaskList([{ title: "No sync'd tasks", due: null }])
             }
 
-            hmUI.createWidget(hmUI.widget.PAGE_INDICATOR, {
-                x: 0,
-                y: px(15),
-                w: DEVICE_WIDTH,
-                h: px(10),
-                align_h: hmUI.align.CENTER_H,
-                align_y: hmUI.align.CENTER_V,
-                h_space: px(10),
-                select_src: 'select_page.png',
-                unselect_src: 'unselect_page.png'
-            })
-
-            // This gesture shouldn't be required, but it seems setScrollMode is
-            // broken when the scroll resets back to the first page.
-            //
-            // Also, I think gesture detection is broken. GESTURE_UP and GESTURE_DOWN,
-            // correspond to up and down gestures, but it seems GESTURE_RIGHT
-            // and GESTURE_LEFT are inverted. i.e GESTURE_RIGHT is a left swipe
-            // and GESTURE_LEFT is a right swipe
-            onGesture({
-                callback: (event) => {
-                    if (event === GESTURE_LEFT) {
-                        if (getSwiperIndex() == 1) {
-                            swipeToIndex({ index: 1 })
-                        }
-                    }
-                    return true
-                },
-            })
-
-            textWidgetStatus = hmUI.createWidget(hmUI.widget.TEXT, {
-                ...FETCH_RESULT_STATUS,
-                text: "",
-            });
-
-
             textWidget = hmUI.createWidget(hmUI.widget.TEXT, {
-                ...FETCH_RESULT_TEXT,
+                ...TOP_TEXT,
                 text: getDateString(getApp().globalData.LAST_SYNC) || "Tasks not sync'd"
             });
 
@@ -164,7 +119,7 @@ Page(
                 click_func: (button_widget) => {
                     logger.log("Syncing Today");
 
-                    textWidgetStatus.setProperty(hmUI.prop.TEXT, "loading...");
+                    textWidget.setProperty(hmUI.prop.TEXT, "loading...");
 
                     const apiKey = getApp().globalData.APIKEY
                     this.httpRequest({
@@ -212,7 +167,6 @@ Page(
                         getApp().globalData.TASK_BY_TASK_ID = taskByTaskID
                         const now = Date.now()
                         getApp().globalData.LAST_SYNC = now
-                        textWidgetStatus.setProperty(hmUI.prop.TEXT, "done!");
                         textWidget.setProperty(hmUI.prop.TEXT, getDateString(now));
                         this.buildTaskList(Object.values(taskByTaskID))
                     })
