@@ -27,12 +27,8 @@ App(
                 const { TASK_BY_TASK_ID, LAST_SYNC } = this.globalData.localStorage.get();
                 this.globalData.TASK_BY_TASK_ID = TASK_BY_TASK_ID;
                 this.globalData.LAST_SYNC = LAST_SYNC;
-                for (const [key, value] of Object.entries(this.globalData.TASK_BY_TASK_ID)) {
-                    logger.log("init key: ", key)
-                    logger.log("init value: ", value)
-                }
             } catch (e) {
-                console.log("error loading task data: ", e);
+                logger.log("error loading task data: ", e);
             }
         },
 

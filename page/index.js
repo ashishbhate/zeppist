@@ -1,22 +1,17 @@
 import { BasePage } from "@zeppos/zml/base-page";
 import { cancel, getAllAlarms, REPEAT_ONCE, set } from '@zos/alarm';
 import { getPackageInfo } from "@zos/app";
-import { GESTURE_LEFT, onGesture } from '@zos/interaction';
-import { getSwiperIndex, SCROLL_MODE_SWIPER_HORIZONTAL, setScrollMode, swipeToIndex } from '@zos/page';
 import * as hmUI from "@zos/ui";
-import { log as Logger, px } from "@zos/utils";
+import { px } from "@zos/utils";
 import {
-    TOP_TEXT,
     FETCH_TODAY_BUTTON,
+    TOP_TEXT,
 } from "zosLoader:./index.[pf].layout.js";
 import { DEVICE_HEIGHT, DEVICE_WIDTH } from "../utils/config/device";
-
-const logger = Logger.getLogger("zeppist");
 
 const getDateString = (due) => {
     // ToLocaleString doesn't seem to support locales besides "en-US",
     // and the options argument is ignored.
-    console.log("due: ", due)
     if (!due || due === null) {
         return ""
     }
@@ -24,7 +19,6 @@ const getDateString = (due) => {
 }
 
 let textWidget;
-let textWidgetStatus;
 
 Page(
     BasePage({
@@ -42,7 +36,19 @@ Page(
             if (this.state._taskListWidget) {
                 hmUI.deleteWidget(this.state._taskListWidget)
             }
-            taskListRaw.sort((a, b) => a.due - b.due)
+            taskListRaw.sort((a, b) => {
+                // TODO figure out why we're getting weird values from Todoist
+                if (!a.due && !b.due) {
+                    return 0
+                }
+                if (!a.due) {
+                    return -1
+                }
+                if (!b.due) {
+                    return 1
+                }
+                return a.due - b.due
+            })
             const now = Date.now()
             let beforeNowIndex = -1
             const taskList = taskListRaw.map((val, idx) => {
@@ -149,13 +155,12 @@ Page(
                 text: getDateString(getApp().globalData.LAST_SYNC) || "Tasks not sync'd"
             });
 
+            let taskByTaskID = {}
 
             hmUI.createWidget(hmUI.widget.BUTTON, {
                 ...FETCH_TODAY_BUTTON,
 
                 click_func: (button_widget) => {
-                    logger.log("Syncing Today");
-
                     textWidget.setProperty(hmUI.prop.TEXT, "loading...");
 
                     const apiKey = getApp().globalData.APIKEY
@@ -166,23 +171,17 @@ Page(
                         method: 'GET',
                         url: "https://api.todoist.com/rest/v2/tasks?filter=today"
                     }).then(data => {
-                        logger.log("receive data");
                         // Delete all existing alarms
-                        logger.log("clearing alarms");
                         const alarms = getAllAlarms()
                         alarms.forEach(alarm => {
                             cancel(alarm)
                         });
 
                         const tasks = data.body
-                        var taskByTaskID = {}
                         const { appId } = getPackageInfo();
                         tasks.forEach(task => {
                             if (task.due.datetime != "") {
                                 const t = Date.parse(task.due.datetime)
-                                console.log("datetime: ", task.due.datetime)
-                                console.log("stamp: ", t)
-                                console.log("now: ", Date.now())
                                 if (t > Date.now()) {
                                     const id = set({
                                         appid: appId,

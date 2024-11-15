@@ -2,12 +2,9 @@ import { BasePage } from "@zeppos/zml/base-page";
 import { back } from '@zos/router';
 import { Vibrator, VIBRATOR_SCENE_STRONG_REMINDER } from '@zos/sensor';
 import * as hmUI from "@zos/ui";
-import { log as Logger } from "@zos/utils";
 import {
     ALARM_TEXT, BUTTON
 } from "zosLoader:./alarm.[pf].layout.js";
-
-const logger = Logger.getLogger("zeppist");
 
 Page(
     BasePage({
@@ -23,8 +20,6 @@ Page(
             if (!taskID || title == "") {
                 const now = Date.now()
                 for (const [key, value] of Object.entries(getApp().globalData.TASK_BY_TASK_ID)) {
-                    logger.log("key: ", key)
-                    logger.log("value: ", value)
                     if (value.due - 30 < now < value.due + 30) {
                         title = value.title
                         break
@@ -34,7 +29,6 @@ Page(
             if (title == "") {
                 title = "missing info"
             }
-            logger.log("ALARM START")
             hmUI.createWidget(hmUI.widget.TEXT, {
                 ...ALARM_TEXT,
                 text: title
