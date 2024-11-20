@@ -6,11 +6,7 @@ const logger = Logger.getLogger("zeppist");
 
 const fileName = "zeppist_data.txt";
 
-// The app icon was taken from flaticon
-// Attrib:
-// To do icon created by GOFOX - Flaticon
-// "https://www.flaticon.com/free-icons/to-do
-
+// The "bell-notification-solid" icon taken from iconoir - https://iconoir.com/
 App(
     BaseApp({
         globalData: {
