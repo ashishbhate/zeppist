@@ -11,7 +11,7 @@ my phone.
 ## How
 1. Set-up your dev environment as described here https://docs.zepp.com/docs/guides/quick-start/
 2. Add your Todoist API key to the app.js file
-3. Run `zepp preview`
+3. Run `zeus preview`
 
 ## UI
 - The top section shows when tasks were last sync'd
