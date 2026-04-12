@@ -169,7 +169,7 @@ Page(
                             "Authorization": "Bearer " + apiKey,
                         },
                         method: 'GET',
-                        url: "https://api.todoist.com/rest/v2/tasks?filter=today"
+                        url: "https://api.todoist.com/api/v1/tasks/filter?query=today"
                     }).then(data => {
                         // Delete all existing alarms
                         const alarms = getAllAlarms()
@@ -177,11 +177,11 @@ Page(
                             cancel(alarm)
                         });
 
-                        const tasks = data.body
+                        const tasks = data.body.results
                         const { appId } = getPackageInfo();
                         tasks.forEach(task => {
-                            if (task.due.datetime != "") {
-                                const t = Date.parse(task.due.datetime)
+                          if (task.due?.date) {
+                                const t = Date.parse(task.due.date)
                                 if (t > Date.now()) {
                                     const id = set({
                                         appid: appId,
